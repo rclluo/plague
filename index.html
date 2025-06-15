@@ -2,19 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Plague Inc: Black Dot Edition</title>
+  <title>Plague</title>
   <style>
     body { margin: 0; background: #111; color: white; font-family: sans-serif; text-align: center; }
     canvas { display: block; margin: 20px auto; background: #eee; }
   </style>
 </head>
 <body>
-  <h1>Plague Inc: Black Dot Edition</h1>
+  <h1>Plague</h1>
   <canvas id="gameCanvas" width="960" height="512"></canvas>
   <p>Click on a dot to start the infection.</p>
   <script>
-    // Load coordinates JSON
-    const coordsUrl = "cities.json";
+    const coordsUrl = "cities.json"; // Make sure this file is in the same folder
 
     fetch(coordsUrl)
       .then(response => response.json())
@@ -27,8 +26,7 @@
       const dots = dotCoords.map(d => ({
         x: d.x,
         y: d.y,
-        infected: false,
-        infectionTime: 0
+        infected: false
       }));
 
       function drawDots() {
@@ -42,16 +40,16 @@
       }
 
       function infectNearby() {
-        const infectionRadius = 15;
+        const infectionRadius = 5;
         const newlyInfected = [];
 
         for (const dot of dots) {
-          if (dot.infected && dot.infectionTime > 10) {
+          if (dot.infected) {
             for (const other of dots) {
               if (!other.infected) {
                 const dx = dot.x - other.x;
                 const dy = dot.y - other.y;
-                if (Math.sqrt(dx*dx + dy*dy) < infectionRadius) {
+                if (Math.sqrt(dx*dx + dy*dy) <= infectionRadius) {
                   newlyInfected.push(other);
                 }
               }
@@ -61,19 +59,20 @@
 
         for (const dot of newlyInfected) {
           dot.infected = true;
-          dot.infectionTime = 0;
         }
       }
 
       function update() {
-        for (const dot of dots) {
-          if (dot.infected) dot.infectionTime++;
-        }
-        infectNearby();
         drawDots();
         requestAnimationFrame(update);
       }
 
+      // Infection spread every 5 seconds
+      setInterval(() => {
+        infectNearby();
+      }, 5000);
+
+      // Start infection on click
       canvas.addEventListener("click", (e) => {
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -82,9 +81,8 @@
         for (const dot of dots) {
           const dx = dot.x - x;
           const dy = dot.y - y;
-          if (dx*dx + dy*dy < 25) {
+          if (dx*dx + dy*dy < 25) { // 5px radius click area
             dot.infected = true;
-            dot.infectionTime = 0;
           }
         }
       });
