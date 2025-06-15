@@ -40,7 +40,7 @@
       }
 
       function infectNearby() {
-        const infectionRadius = 5;
+        const infectionRadius = 1;
         const newlyInfected = [];
 
         for (const dot of dots) {
@@ -70,7 +70,7 @@
       // Infection spread every 5 seconds
       setInterval(() => {
         infectNearby();
-      }, 5000);
+      }, 1000);
 
       // Start infection on click
       canvas.addEventListener("click", (e) => {
