@@ -38,7 +38,7 @@
       }
 
       function infectNearby() {
-        const infectionRadius = 1;
+        const infectionRadius = 2;
         const newlyInfected = [];
 
         for (const dot of dots) {
@@ -65,7 +65,6 @@
         requestAnimationFrame(update);
       }
 
-      // Infection spread every 5 seconds
       setInterval(() => {
         infectNearby();
       }, 1000);
